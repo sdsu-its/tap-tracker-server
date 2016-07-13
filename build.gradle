@@ -1,0 +1,38 @@
+group 'edu.sdsu.its.taptracker'
+version ''
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Jersey Core
+    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0.1'
+    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.23.1'
+
+    compile('com.sun.jersey:jersey-client:1.19') { exclude(module: 'jsr311-api') }
+    compile 'org.apache.httpcomponents:httpclient:4.4'
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+
+
+    // Logging
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+
+    // DB
+    compile 'mysql:mysql-connector-java:5.1.38'
+
+    // GSON
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
+
+    // CSV Export
+    compile group: 'com.opencsv', name: 'opencsv', version: '3.8'
+
+    // Session Tokens & Passwords
+    compile group: 'org.jasypt', name: 'jasypt', version: '1.9.2'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+
+}
