@@ -26,8 +26,8 @@ public class TapEvent {
         this.time = time;
     }
 
-    public TapEvent(int id, int type) {
-        this.id = id;
+    public TapEvent(int deviceID, int type) {
+        this.deviceID = deviceID;
         this.type = type;
     }
 

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Interface with the MySQL DB
@@ -137,7 +138,7 @@ public class DB {
      * @param id {@link int} Device Unique ID
      * @return {@link edu.sdsu.its.taptracker.DeviceHandler.Device} Fetched Device
      */
-    static DeviceHandler.Device getDevice(final int id) {
+    public static DeviceHandler.Device getDevice(final int id) {
         Connection connection = getConnection();
         Statement statement = null;
         DeviceHandler.Device device = null;
@@ -177,7 +178,7 @@ public class DB {
      *
      * @param device {@link edu.sdsu.its.taptracker.DeviceHandler.Device}
      */
-    static void createDevice(final DeviceHandler.Device device) {
+    public static void createDevice(final DeviceHandler.Device device) {
         //language=SQL
         executeStatement("INSERT INTO devices (id, name) VALUES (" + device.id + ", '" + sanitize(device.name != null ? device.name : "") + "');");
     }
@@ -187,12 +188,12 @@ public class DB {
      *
      * @param device {@link edu.sdsu.its.taptracker.DeviceHandler.Device} Updated Device
      */
-    static void updateDevice(final DeviceHandler.Device device) {
+    public static void updateDevice(final DeviceHandler.Device device) {
         //language=SQL
         executeStatement("UPDATE devices SET name='" + sanitize(device.name) + "' WHERE id=" + device.id + ";");
     }
 
-    static TapEvent[] getDailyEventsByDevice(final int deviceID) {
+    public static TapEvent[] getDailyEventsByDevice(final int deviceID) {
         Connection connection = getConnection();
         Statement statement = null;
         ArrayList<TapEvent> tapEventArrayList = new ArrayList<>();
@@ -338,7 +339,7 @@ public class DB {
      * @param count {@link int} Number of Events to Fetch MAX
      * @return {@link TapEvent[]} Array of Events, up to count in length
      */
-    static TapEvent[] getRecentEvents(final int count) {
+    public static TapEvent[] getRecentEvents(final int count) {
         Connection connection = getConnection();
         Statement statement = null;
         ArrayList<TapEvent> tapEventArrayList = new ArrayList<>(count);
@@ -402,14 +403,14 @@ public class DB {
      * @param end     {@link String} End Date, inclusive (YYYY-MM-DD)
      * @return {@link File} CSV with events meeting the specified parameters
      */
-    static File exportEvents(final int[] devices, final String start, final String end) throws IOException {
+    public static File exportEvents(final int[] devices, final String start, final String end) throws IOException {
         String idRestriction = "";
         if (devices != null && devices.length != 0) {
             idRestriction = "AND ";
             for (int i : devices) {
                 idRestriction += "device_id=" + i + " OR ";
             }
-            idRestriction = idRestriction.substring(0, -4); // Remove the last or and extra spaces.
+            idRestriction = idRestriction.substring(0, idRestriction.length() - 4); // Remove the last or and extra spaces.
         }
 
         //language=SQL
@@ -433,14 +434,24 @@ public class DB {
      * <p>
      * Date Format for Start/End Date: YYYY-MM-DD
      *
-     * @param start {@link String} Start Date (YYYY-MM-DD)
-     * @param end   {@link String} End Date, inclusive (YYYY-MM-DD)
+     * @param devices {@link int[]} List of Device IDs to filter. If blank, all IDs will be selected.
+     * @param start   {@link String} Start Date (YYYY-MM-DD)
+     * @param end     {@link String} End Date, inclusive (YYYY-MM-DD)
      * @return {@link TapEvent[]} Matching Events
      */
-    static TapEvent[] getEventsInRange(final String start, final String end) {
+    public static TapEvent[] getEventsInRange(final int[] devices, final String start, final String end) {
         Connection connection = getConnection();
         Statement statement = null;
         ArrayList<TapEvent> tapEventArrayList = new ArrayList<>();
+
+        String idRestriction = "";
+        if (devices != null && devices.length != 0) {
+            idRestriction = "AND ";
+            for (int i : devices) {
+                idRestriction += "device_id=" + i + " OR ";
+            }
+            idRestriction = idRestriction.substring(0, idRestriction.length() - 4); // Remove the last or and extra spaces.
+        }
 
         try {
             statement = connection.createStatement();
@@ -454,6 +465,7 @@ public class DB {
                     "FROM events e LEFT OUTER JOIN devices d ON d.id = e.device_id\n" +
                     "WHERE e.time BETWEEN '" + start + "' AND\n" +
                     "  DATE_ADD('" + end + "', INTERVAL 1 DAY)\n" +
+                    idRestriction + "\n" +
                     "ORDER BY time DESC;";
             LOGGER.debug(String.format("Executing SQL Query - \"%s\"", sql));
             ResultSet resultSet = statement.executeQuery(sql);
@@ -489,6 +501,30 @@ public class DB {
         }
 
         return tapEvents;
+    }
+
+    // Unit Tests
+
+    /**
+     * Delete all events associated with a device and remove the device form the DB.
+     * Use with extreme caution since this cannot be undone.
+     *
+     * @param deviceID {@link int} Device ID
+     * @throws InterruptedException A delay is used to ensure that the sequence of the commands is correct, this should
+     *                              not be interrupted if possible.
+     */
+    public static void deleteDevice(final int deviceID) throws InterruptedException {
+        LOGGER.warn("Deleting ALL events and device information for DeviceID: " + deviceID);
+
+        //language=SQL
+        executeStatement("DELETE FROM events WHERE `device_id` = " + deviceID + ";");
+
+        TimeUnit.SECONDS.sleep(1); // Execute statements are executed asynchronously and can take a few seconds to execute
+
+        //language=SQL
+        executeStatement("DELETE FROM devices WHERE `id` = " + deviceID + ";");
+
+        TimeUnit.SECONDS.sleep(1); // Execute statements are executed asynchronously and can take a few seconds to execute
     }
 
     public static void main(String[] args) {

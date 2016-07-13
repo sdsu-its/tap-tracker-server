@@ -113,7 +113,7 @@ public class UI {
         }
         LOGGER.info(String.format("Recieved request for events in range (%s - %s) from %s", startDate, endDate, user.getUsername()));
 
-        return Response.status(Response.Status.OK).entity(gson.toJson(DB.getEventsInRange(startDate, endDate))).build();
+        return Response.status(Response.Status.OK).entity(gson.toJson(DB.getEventsInRange(new int[]{}, startDate, endDate))).build();
     }
 
 

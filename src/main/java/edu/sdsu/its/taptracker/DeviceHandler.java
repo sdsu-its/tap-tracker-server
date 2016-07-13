@@ -128,17 +128,25 @@ public class DeviceHandler {
         return response.build();
     }
 
-    static class Device {
+    public static class Device {
         int id;
         String name;
 
-        Device(int id) {
+        public Device(int id) {
             this.id = id;
         }
 
-        Device(int id, String name) {
+        public Device(int id, String name) {
             this.id = id;
             this.name = name;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
         }
 
         @Override
