@@ -308,10 +308,10 @@ public class DB {
     }
 
     /**
-     * TODO Docs
+     * Update a UI User. Only passwords can be changed, since the username is used as the primary key.
      *
-     * @param user
-     * @return
+     * @param user {@link User} User to Update with Updated Fields
+     * @return {@link User} Updated User
      */
     static User updateUser(final User user) {
         // TODO
@@ -319,10 +319,10 @@ public class DB {
     }
 
     /**
-     * TODO Docs
+     * Create a UI User. Once created, the user's username cannot be changed.
      *
-     * @param user
-     * @return
+     * @param user {@link User} User to Create
+     * @return {@link User} Crated User
      */
     static User createUser(final User user) {
         user.setPassword(PASSWORD_ENCRYPTOR.encryptPassword(user.getPassword()));
@@ -392,14 +392,15 @@ public class DB {
     }
 
     /**
-     * TODO DOCs
+     * Export Events to a CSV. The File returned is a temporary file and the information should be moved to a permanent
+     * location if being stored for any amount of time that extends beyond the scope of the session.
      * <p>
      * Date Format for Start/End Date: YYYY-MM-DD
      *
-     * @param devices
-     * @param start
-     * @param end
-     * @return
+     * @param devices {@link int[]} List of Device IDs to filter. If blank, all IDs will be selected.
+     * @param start   {@link String} Start Date (YYYY-MM-DD)
+     * @param end     {@link String} End Date, inclusive (YYYY-MM-DD)
+     * @return {@link File} CSV with events meeting the specified parameters
      */
     static File exportEvents(final int[] devices, final String start, final String end) throws IOException {
         String idRestriction = "";
@@ -428,13 +429,13 @@ public class DB {
     }
 
     /**
-     * TODO Docs
+     * Export events to Array for Serialization.
      * <p>
      * Date Format for Start/End Date: YYYY-MM-DD
      *
-     * @param start
-     * @param end
-     * @return
+     * @param start {@link String} Start Date (YYYY-MM-DD)
+     * @param end   {@link String} End Date, inclusive (YYYY-MM-DD)
+     * @return {@link TapEvent[]} Matching Events
      */
     static TapEvent[] getEventsInRange(final String start, final String end) {
         Connection connection = getConnection();

@@ -11,7 +11,8 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * TODO JavaDoc
+ * Interface with the Device. POST request payloads should be JSON formatted, but the encoding header is not checked for
+ * device simplicity.
  *
  * @author Tom Paulus
  *         Created on 7/5/16.
@@ -21,10 +22,10 @@ public class DeviceHandler {
     private static final Logger LOGGER = Logger.getLogger(DeviceHandler.class);
 
     /**
-     * TODO JDOC
+     * Initialize the Device. The device register's its deviceID and a device name is returned if available.
      *
-     * @param deviceID
-     * @return
+     * @param deviceID {@link int} Device's Unique ID
+     * @return {@link Response} Device Name if stored, else an empty string
      */
     @Path("start")
     @GET
@@ -45,6 +46,12 @@ public class DeviceHandler {
         return Response.status(Response.Status.OK).entity(device.name).build();
     }
 
+    /**
+     * Get Daily Tap Counts for the day for the specific device.
+     *
+     * @param deviceID {@link int} Device's Unique ID
+     * @return {@link Response} Counts for the day for the device. Format: "1 2 3"
+     */
     @Path("counts")
     @GET
     @Consumes(MediaType.WILDCARD)
@@ -58,7 +65,7 @@ public class DeviceHandler {
         TapEvent[] events = DB.getDailyEventsByDevice(deviceID);
         int[] counts = new int[3];
         for (TapEvent e : events) {
-            counts[e.type - 1] ++;
+            counts[e.type - 1]++;
         }
 
         String return_value = "";
@@ -70,6 +77,13 @@ public class DeviceHandler {
         return Response.status(Response.Status.OK).entity(return_value).build();
     }
 
+    /**
+     * Get the Current Timezone Offset for the provided zone.
+     * List of TimeZone IDs: https://garygregory.wordpress.com/2013/06/18/what-are-the-java-timezone-ids/
+     *
+     * @param zoneName {@link String} Java TimeZone ID
+     * @return {@link Response} Time Zone offset as an Hour Integer
+     */
     @Path("tz_offset")
     @GET
     @Consumes(MediaType.WILDCARD)
@@ -82,10 +96,11 @@ public class DeviceHandler {
     }
 
     /**
-     * TODO JDOC
+     * Create and Log an Event (Button Push).
+     * Three different types can be sent and stored (1-3).
      *
      * @param payload {@link String} JSON Formatted TapEvent {@see TapEvent}
-     * @return
+     * @return {@link Response} If the event was logged sucesfully
      */
     @Path("event")
     @POST

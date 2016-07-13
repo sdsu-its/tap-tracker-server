@@ -14,7 +14,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * TODO JavaDoc
+ * Front End/User Interface Endpoints.
+ * All requests, except login, require a "session" header to be transmitted with the request for authentication
  *
  * @author Tom Paulus
  *         Created on 7/6/16.
@@ -22,6 +23,7 @@ import java.io.IOException;
 @Path("ui")
 public class UI {
     private static final Logger LOGGER = Logger.getLogger(UI.class);
+    private static final int DEFAULT_COUNT = 25;
 
 
     /**
@@ -60,23 +62,43 @@ public class UI {
         return response.build();
     }
 
+    /**
+     * Fetch recent events from the DB.
+     *
+     * @param userToken {@link String} Authentication Token
+     * @param count {@link int} Maximum number of events to fetch. 25 if left blank or 0.
+     * @return {@link Response} Array of TapEvents {@see edu.sdsu.its.taptracker.Models.TapEvent}
+     */
     @Path("recent_events")
     @GET
     @Consumes(MediaType.WILDCARD)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRecentEvents(@HeaderParam("session") final String userToken,
-                                    @QueryParam("count") final int count) {
+                                    @QueryParam("count") int count) {
         User user = Session.validate(userToken);
         Gson gson = new Gson();
         if (user == null || user.getUsername() == null || user.getPassword() == null) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(gson.toJson(new SimpleMessage("Error", "Invalid Session Token"))).build();
         }
         LOGGER.info("Recieved request for recent events from " + user.getUsername());
+        if (count == 0) {
+            LOGGER.warn("No count was specified for recent events, using default");
+            count = DEFAULT_COUNT;
+        }
 
         return Response.status(Response.Status.OK).entity(gson.toJson(DB.getRecentEvents(count))).build();
 
     }
 
+    /**
+     * Get events in a given time range.
+     * Useful for Analytics.
+     *
+     * @param userToken {@link String} Authentication Token
+     * @param startDate {@link String} Start Date (YYYY-MM-DD)
+     * @param endDate {@link String} End Date (YYYY-MM-DD)
+     * @return {@link Response} Array of TapEvents {@see edu.sdsu.its.taptracker.Models.TapEvent}
+     */
     @Path("events")
     @GET
     @Consumes(MediaType.WILDCARD)
@@ -95,6 +117,15 @@ public class UI {
     }
 
 
+    /**
+     * Export a CSV of events that meet specified device and date parameters.
+     *
+     * @param userToken {@link String} Authentication Token
+     * @param deviceIDs {@link String} List of Device IDs to filter. If blank, all IDs will be selected.
+     * @param startDate {@link String} Start Date (YYYY-MM-DD)
+     * @param endDate {@link String} End Date (YYYY-MM-DD)
+     * @return {@link Response} CSV File Download
+     */
     @Path("csv_export")
     @GET
     @Consumes(MediaType.WILDCARD)

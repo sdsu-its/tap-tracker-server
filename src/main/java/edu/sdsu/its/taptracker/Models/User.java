@@ -3,7 +3,7 @@ package edu.sdsu.its.taptracker.Models;
 import com.google.gson.annotations.Expose;
 
 /**
- * TODO JavaDoc
+ * Models a UI User
  *
  * @author Tom Paulus
  *         Created on 7/6/16.

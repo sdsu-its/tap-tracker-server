@@ -5,7 +5,8 @@ import edu.sdsu.its.taptracker.DB;
 import java.sql.Timestamp;
 
 /**
- * TODO JavaDoc
+ * Models a Tap Event as Recieved by the Server and what is sent to the UI.
+ * Recieved events only have the deviceID and the type defined. Outgoing events have all fields defined.
  *
  * @author Tom Paulus
  *         Created on 7/6/16.
