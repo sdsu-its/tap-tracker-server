@@ -1,6 +1,7 @@
 package edu.sdsu.its.taptracker;
 
 import com.opencsv.CSVWriter;
+import edu.sdsu.its.taptracker.Models.Device;
 import edu.sdsu.its.taptracker.Models.TapEvent;
 import edu.sdsu.its.taptracker.Models.User;
 import org.apache.log4j.Logger;
@@ -136,12 +137,12 @@ public class DB {
      * Retrieve a Device from the Database. Will return null if the device was not found.
      *
      * @param id {@link int} Device Unique ID
-     * @return {@link edu.sdsu.its.taptracker.DeviceHandler.Device} Fetched Device
+     * @return {@link Device} Fetched Device
      */
-    public static DeviceHandler.Device getDevice(final int id) {
+    public static Device getDevice(final int id) {
         Connection connection = getConnection();
         Statement statement = null;
-        DeviceHandler.Device device = null;
+        Device device = null;
 
         try {
             statement = connection.createStatement();
@@ -151,7 +152,7 @@ public class DB {
             ResultSet resultSet = statement.executeQuery(sql);
 
             if (resultSet.next()) {
-                device = new DeviceHandler.Device(resultSet.getInt("id"), resultSet.getString("name"));
+                device = new Device(resultSet.getInt("id"), resultSet.getString("name"));
             }
             if (device != null) LOGGER.debug("Get Device Returned: " + device.toString());
             else LOGGER.debug("No Device was found with ID: " + id);
@@ -174,11 +175,63 @@ public class DB {
     }
 
     /**
+     * Get all devices and the time of their latest event from the DB
+     *
+     * @return {@link Device[]} Array of Devices
+     */
+    public static Device[] getDevices() {
+        Connection connection = getConnection();
+        Statement statement = null;
+        ArrayList<Device> deviceArrayList = new ArrayList<>();
+
+        try {
+            statement = connection.createStatement();
+            //language=SQL
+            final String sql = "SELECT\n" +
+                    "  d.id AS id,\n" +
+                    "  d.name AS name,\n" +
+                    "  e1.time AS last_event\n" +
+                    "FROM devices d\n" +
+                    "  LEFT JOIN events e1 ON (d.id = e1.device_id)\n" +
+                    "  LEFT OUTER JOIN events e2 ON (d.id = e2.device_id AND\n" +
+                    "                                (e1.time < e2.time OR e1.time = e2.time AND e1.id < e2.id))\n" +
+                    "WHERE e2.id IS NULL;";
+            LOGGER.debug(String.format("Executing SQL Query - \"%s\"", sql));
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+                deviceArrayList.add(new Device(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getTimestamp("last_event")));
+            }
+            LOGGER.debug(String.format("%d devices were found", deviceArrayList.size()));
+
+            resultSet.close();
+        } catch (SQLException e) {
+            LOGGER.error("Problem querying DB for DeviceID", e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.warn("Problem Closing Statement", e);
+                }
+            }
+        }
+
+        Device[] devices = new Device[deviceArrayList.size()];
+        for (int d = 0; d < deviceArrayList.size(); d++) {
+            devices[d] = deviceArrayList.get(d);
+        }
+
+        return devices;
+    }
+
+    /**
      * Create Device in the DB. Device ID will not be mutable once it has been created.
      *
-     * @param device {@link edu.sdsu.its.taptracker.DeviceHandler.Device}
+     * @param device {@link Device}
      */
-    public static void createDevice(final DeviceHandler.Device device) {
+    public static void createDevice(final Device device) {
         //language=SQL
         executeStatement("INSERT INTO devices (id, name) VALUES (" + device.id + ", '" + sanitize(device.name != null ? device.name : "") + "');");
     }
@@ -186,9 +239,9 @@ public class DB {
     /**
      * Update Device Name. Device ID is not mutable.
      *
-     * @param device {@link edu.sdsu.its.taptracker.DeviceHandler.Device} Updated Device
+     * @param device {@link Device} Updated Device
      */
-    public static void updateDevice(final DeviceHandler.Device device) {
+    public static void updateDevice(final Device device) {
         //language=SQL
         executeStatement("UPDATE devices SET name='" + sanitize(device.name) + "' WHERE id=" + device.id + ";");
     }

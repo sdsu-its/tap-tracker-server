@@ -1,6 +1,7 @@
 package edu.sdsu.its.taptracker;
 
 import com.google.gson.Gson;
+import edu.sdsu.its.taptracker.Models.Device;
 import edu.sdsu.its.taptracker.Models.TapEvent;
 import org.apache.log4j.Logger;
 
@@ -126,35 +127,5 @@ public class DeviceHandler {
             response = Response.status(Response.Status.NOT_ACCEPTABLE).entity("Incomplete Event Payload");
         }
         return response.build();
-    }
-
-    public static class Device {
-        int id;
-        String name;
-
-        public Device(int id) {
-            this.id = id;
-        }
-
-        public Device(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String toString() {
-            return "Device{" +
-                    "id=" + id +
-                    ", name='" + name + '\'' +
-                    '}';
-        }
     }
 }
