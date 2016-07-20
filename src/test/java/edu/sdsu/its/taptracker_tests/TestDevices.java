@@ -2,6 +2,7 @@ package edu.sdsu.its.taptracker_tests;
 
 import edu.sdsu.its.taptracker.DB;
 import edu.sdsu.its.taptracker.DeviceHandler;
+import edu.sdsu.its.taptracker.Models.Device;
 import edu.sdsu.its.taptracker.Models.TapEvent;
 import org.apache.log4j.Logger;
 import org.junit.AfterClass;
@@ -34,7 +35,7 @@ public class TestDevices {
         TimeUnit.SECONDS.sleep(2); // Execute statements are executed asynchronously and can take a few seconds to execute
 
         LOGGER.info("Creating new Device with ID: " + DEVICE_ID);
-        DB.createDevice(new DeviceHandler.Device(DEVICE_ID));
+        DB.createDevice(new Device(DEVICE_ID));
 
         TimeUnit.SECONDS.sleep(1); // Execute statements are executed asynchronously and can take a few seconds to execute
 
@@ -83,14 +84,14 @@ public class TestDevices {
 
     @Test
     public void getDevice() throws Exception {
-        DeviceHandler.Device device = DB.getDevice(DEVICE_ID);
+        Device device = DB.getDevice(DEVICE_ID);
         assertTrue(String.format("Created Device (%d) could not be found", DEVICE_ID), device != null && device.getId() != 0);
     }
 
     @Test
     public void updateDevice() throws Exception {
         LOGGER.debug("Updating Test Device Name to \"Test Device\"");
-        DeviceHandler.Device device = new DeviceHandler.Device(DEVICE_ID, DEVICE_NAME);
+        Device device = new Device(DEVICE_ID, DEVICE_NAME);
         DB.updateDevice(device);
 
         TimeUnit.SECONDS.sleep(1); // Execute statements are executed asynchronously and can take a few seconds to execute
