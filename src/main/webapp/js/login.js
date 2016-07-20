@@ -1,11 +1,18 @@
 /**
- * TODO Docs
+ * Login Page Functions.
  *
  * Created by tpaulus on 7/6/16.
  */
 
 window.onload = function () {
-    checkLoggedIn()
+    checkLoggedIn();
+
+    if (window.location.hash.substr(1) == "logged-out") {
+        $('#loggedOutNotice').show();
+        window.setInterval(function () {
+            $('#loggedOutNotice').hide();
+        }, 10000)
+    }
 };
 
 function checkLoggedIn() {

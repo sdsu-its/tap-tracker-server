@@ -8,8 +8,6 @@ var start;
 var end;
 var type;
 
-google.charts.load('current', {'packages': ['corechart']});
-
 function updateAnalytics() {
     start = $('#analytics-start-date').val();
     end = $('#analytics-end-date').val();
@@ -52,31 +50,6 @@ function updateAnalytics() {
 }
 
 function doUpdate(eventsJSON) {
-    drawCumulativeBreakdown(eventsJSON);
-}
-
-function drawCumulativeBreakdown(d) {
-    switch (type) {
-        case 1:
-            var data = google.visualization.arrayToDataTable([
-                ['Year', 'Sales', 'Expenses'],
-                ['2004', 1000, 400],
-                ['2005', 1170, 460],
-                ['2006', 660, 1120],
-                ['2007', 1030, 540]
-            ]);
-
-            var options = {
-                title: 'Company Performance',
-                curveType: 'function',
-                legend: {position: 'bottom'}
-            };
-
-            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-            chart.draw(data, options);
-    }
-
-    console.log(data);
+    console.log(eventsJSON);
 }
 

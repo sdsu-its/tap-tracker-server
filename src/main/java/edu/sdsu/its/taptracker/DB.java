@@ -368,7 +368,10 @@ public class DB {
      * @return {@link User} Updated User
      */
     static User updateUser(final User user) {
-        // TODO
+        user.setPassword(PASSWORD_ENCRYPTOR.encryptPassword(user.getPassword()));
+
+        //language=SQL
+        executeStatement("UPDATE users SET password='" + user.getPassword() + "' WHERE username='" + user.getUsername() + "';");
         return user;
     }
 

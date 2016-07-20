@@ -30,6 +30,11 @@
     </div>
 
     <form class="form-signin" onsubmit="login(); return false;">
+        <div class="alert alert-info alert-dismissible" role="alert" id="loggedOutNotice" style="display: none">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            You have been logged out.
+        </div>
+
         <h2 class="form-signin-heading">Please sign in</h2>
         <div class="alert alert-danger" id="login-fail" style="display: none"><b>Username</b> or <b>Password</b> are incorrect.</div>
         <label for="inputUsername" class="sr-only">Email address</label>
@@ -42,6 +47,9 @@
 </div> <!-- /container -->
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
 <script src="js/js.cookie.js"></script>
 <script src="js/login.js"></script>
 </body>
