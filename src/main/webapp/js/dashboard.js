@@ -6,31 +6,12 @@
 
 window.onload = function () {
     checkLogin();
-    loadRecent();
+    loadRecent(false);
     if (window.location.hash.substr(1) != "" || window.location.hash.substr(1) == currentPage) {
         showPage(window.location.hash.substr(1));
     }
-    loadDevices();
+    loadDevices(false);
 };
-
-function checkLogin() {
-    var sessionToken = Cookies.get("session");
-    if (sessionToken != null && sessionToken.length > 0) {
-        var xmlHttp = new XMLHttpRequest();
-
-        xmlHttp.onreadystatechange = function () {
-            if (xmlHttp.readyState == 4) {
-                if (xmlHttp.status != 200) window.location.replace("index.html");
-            }
-        };
-
-        xmlHttp.open('get', "api/session/verify");
-        xmlHttp.setRequestHeader("session", sessionToken);
-        xmlHttp.send();
-    } else {
-        window.location.replace("index.html");
-    }
-}
 
 var currentPage = "overview";
 function showPage(name) {
@@ -42,21 +23,29 @@ function showPage(name) {
     currentPage = name;
 }
 
-function loadRecent() {
-    var xmlHttp = new XMLHttpRequest();
+function loadRecent(forceRefresh) {
+    if (!forceRefresh && sessionStorage.getItem("events")) {
+        doLoadRecent(JSON.parse(sessionStorage.getItem("events")));
+    } else {
 
-    xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4) {
-            if (xmlHttp.status == 200) doLoadRecent(JSON.parse(xmlHttp.responseText));
-        }
-    };
 
-    xmlHttp.open('get', "api/ui/recent_events?count=25");
-    xmlHttp.setRequestHeader("session", Cookies.get("session"));
-    xmlHttp.send();
+        var xmlHttp = new XMLHttpRequest();
+
+        xmlHttp.onreadystatechange = function () {
+            if (xmlHttp.readyState == 4) {
+                if (xmlHttp.status == 200) doLoadRecent(JSON.parse(xmlHttp.responseText));
+            }
+        };
+
+        xmlHttp.open('get', "api/ui/recent_events?count=25");
+        xmlHttp.setRequestHeader("session", Cookies.get("session"));
+        xmlHttp.send();
+    }
 }
 
 function doLoadRecent(eventsJSON) {
+    sessionStorage.setItem("events", JSON.stringify(eventsJSON));
+
     var table = document.getElementById("events-table");
     var body = table.getElementsByTagName("tbody")[0];
     for (var e = 0; e < eventsJSON.length; e++) {
@@ -71,23 +60,4 @@ function doLoadRecent(eventsJSON) {
 
     }
     sorttable.makeSortable(table);
-}
-
-function loadDevices() {
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange = function () {
-        if (xmlHttp.readyState == 4) {
-            if (xmlHttp.status == 200) doLoadDevices(JSON.parse(xmlHttp.responseText));
-        }
-    };
-
-    xmlHttp.open('get', "api/ui/devices");
-    xmlHttp.setRequestHeader("session", Cookies.get("session"));
-    xmlHttp.send();
-}
-
-function doLoadDevices(devicesJSON) {
-    $("#device-count-badge").text(devicesJSON.length);
-    sessionStorage.setItem("devices", JSON.stringify(devicesJSON));
 }

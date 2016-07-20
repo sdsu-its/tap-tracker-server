@@ -4,6 +4,25 @@
  * Created by tpaulus on 7/19/16.
  */
 
+function checkLogin() {
+    var sessionToken = Cookies.get("session");
+    if (sessionToken != null && sessionToken.length > 0) {
+        var xmlHttp = new XMLHttpRequest();
+
+        xmlHttp.onreadystatechange = function () {
+            if (xmlHttp.readyState == 4) {
+                if (xmlHttp.status != 200) window.location.replace("index.html");
+            }
+        };
+
+        xmlHttp.open('get', "api/session/verify");
+        xmlHttp.setRequestHeader("session", sessionToken);
+        xmlHttp.send();
+    } else {
+        window.location.replace("index.html");
+    }
+}
+
 function showProfile() {
     $('#profile-username').text(Cookies.getJSON("user").user.username);
     $('#profileModal').modal('show');
@@ -70,4 +89,28 @@ function logout() {
     Cookies.remove("user");
 
     window.location = "index.html#logged-out";
+}
+
+function loadDevices(forceRefresh) {
+    if (!forceRefresh && sessionStorage.getItem("devices")) {
+        doLoadDevices(JSON.parse(sessionStorage.getItem("devices")));
+    }
+    else {
+        var xmlHttp = new XMLHttpRequest();
+
+        xmlHttp.onreadystatechange = function () {
+            if (xmlHttp.readyState == 4) {
+                if (xmlHttp.status == 200) doLoadDevices(JSON.parse(xmlHttp.responseText));
+            }
+        };
+
+        xmlHttp.open('get', "api/ui/devices");
+        xmlHttp.setRequestHeader("session", Cookies.get("session"));
+        xmlHttp.send();
+    }
+}
+
+function doLoadDevices(devicesJSON) {
+    $("#device-count-badge").text(devicesJSON.length);
+    sessionStorage.setItem("devices", JSON.stringify(devicesJSON));
 }
