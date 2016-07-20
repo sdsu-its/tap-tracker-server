@@ -6,4 +6,9 @@
 
 window.onload = function () {
     loadDevices(false);
+    updateTable();
 };
+
+function updateTable() {
+
+}

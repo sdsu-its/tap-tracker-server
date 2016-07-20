@@ -23,6 +23,16 @@ function checkLogin() {
     }
 }
 
+var currentPage = "overview";
+function showPage(name) {
+    $("#" + currentPage + "-menu").removeClass("active");
+    $("#" + currentPage).hide();
+    $("#" + name + "-menu").addClass("active");
+    $("#" + name).show();
+
+    currentPage = name;
+}
+
 function showProfile() {
     $('#profile-username').text(Cookies.getJSON("user").user.username);
     $('#profileModal').modal('show');
@@ -30,7 +40,6 @@ function showProfile() {
 
 function updateProfile() {
     var username = $('#profile-username').text();
-    var current_password = $('#currentPassword');
     var update_password1 = $('#updatePassword1');
     var update_password2 = $('#updatePassword2');
 
@@ -39,15 +48,10 @@ function updateProfile() {
         update_password1.val('');
         update_password2.val('');
         update_password1.focus();
-    } else if (update_password1.val() == current_password.val()) {
-        $('#newPassMatch').show();
-        update_password1.val('');
-        update_password2.val('');
-        update_password1.focus();
     } else {
         var xmlHttp = new XMLHttpRequest();
 
-        var json = '{"username":"' + username + '","currentPassword":"' + current_password.val() + '","newPassword":"' + update_password1.val() + '"}';
+        var json = '{"username":"' + username + '","password":"' + update_password1.val() + '"}';
 
         xmlHttp.onreadystatechange = function () {
             if (xmlHttp.readyState == 4) {

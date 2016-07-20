@@ -19,11 +19,32 @@ public class Users {
     private static final Logger LOGGER = Logger.getLogger(Users.class);
 
     /**
+     * List all Users
+     *
+     * @param userToken {@link String} Authentication Token
+     * @return {@link Response} List of Users as JSON Array
+     */
+    @Path("list")
+    @GET
+    @Consumes(MediaType.WILDCARD)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response listUsers(@HeaderParam("session") final String userToken) {
+        User user = Session.validate(userToken);
+        Gson gson = new Gson();
+        if (user == null || user.getUsername() == null || user.getPassword() == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(gson.toJson(new UI.SimpleMessage("Error", "Invalid Session Token"))).build();
+        }
+        LOGGER.info("Recieved to list all users from " + user.getUsername());
+
+        return Response.status(Response.Status.OK).entity(gson.toJson(DB.getUsers())).build();
+    }
+
+    /**
      * Update a user's Password.
      * Usernames cannot be changed since they are used as the primary key in the Database.
      *
      * @param userToken {@link String} Authentication Token
-     * @param payload {@link String} UpdateUser JSON {@see Users.updatePayload}
+     * @param payload {@link String} UpdateUser JSON {@see User}
      * @return {@link Response} Message if operation was successful
      */
     @Path("update")
@@ -40,17 +61,10 @@ public class Users {
         }
         LOGGER.info("Recieved to update password from " + user.getUsername());
 
-        updatePayload updatePayload = gson.fromJson(payload, Users.updatePayload.class);
+        User updateUser = gson.fromJson(payload, User.class);
 
-        User updateUser = DB.checkPassword(updatePayload.username, updatePayload.currentPassword);
-        if (updateUser == null) {
-            LOGGER.info("Incorrect Current password for user: " + updatePayload.username);
-            return Response.status(Response.Status.BAD_REQUEST).entity(gson.toJson(new UI.SimpleMessage("Current Password not correct."))).build();
-        }
-
-        updateUser.setPassword(updatePayload.newPassword);
         DB.updateUser(updateUser);
-        LOGGER.debug(String.format("\"%s\"'s password was updated successfully", updatePayload.username));
+        LOGGER.debug(String.format("\"%s\"'s password was updated successfully", updateUser.getUsername()));
 
         return Response.status(Response.Status.OK).entity(gson.toJson(new UI.SimpleMessage("User Updated Successfully"))).build();
     }
@@ -69,14 +83,18 @@ public class Users {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(@HeaderParam("session") final String userToken,
                                final String payload) {
-        // TODO
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
-    }
 
-    private static class updatePayload{
-        public String username;
-        String currentPassword;
-        String newPassword;
-    }
+        User user = Session.validate(userToken);
+        Gson gson = new Gson();
+        if (user == null || user.getUsername() == null || user.getPassword() == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(gson.toJson(new UI.SimpleMessage("Error", "Invalid Session Token"))).build();
+        }
 
+        User createUser = gson.fromJson(payload, User.class);
+        LOGGER.info(String.format("Recieved to create user(%s) from %s", createUser.getUsername(), user.getUsername()));
+
+        DB.createUser(createUser);
+
+        return Response.status(Response.Status.CREATED).build();
+    }
 }

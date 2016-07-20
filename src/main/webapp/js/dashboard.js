@@ -13,16 +13,6 @@ window.onload = function () {
     loadDevices(false);
 };
 
-var currentPage = "overview";
-function showPage(name) {
-    $("#" + currentPage + "-menu").removeClass("active");
-    $("#" + currentPage).hide();
-    $("#" + name + "-menu").addClass("active");
-    $("#" + name).show();
-
-    currentPage = name;
-}
-
 function loadRecent(forceRefresh) {
     if (!forceRefresh && sessionStorage.getItem("events")) {
         doLoadRecent(JSON.parse(sessionStorage.getItem("events")));

@@ -218,12 +218,7 @@ public class DB {
             }
         }
 
-        Device[] devices = new Device[deviceArrayList.size()];
-        for (int d = 0; d < deviceArrayList.size(); d++) {
-            devices[d] = deviceArrayList.get(d);
-        }
-
-        return devices;
+        return deviceArrayList.toArray(new Device[]{});
     }
 
     /**
@@ -285,12 +280,7 @@ public class DB {
             }
         }
 
-        TapEvent[] tapEvents = new TapEvent[tapEventArrayList.size()];
-        for (int e = 0; e < tapEventArrayList.size(); e++) {
-            tapEvents[e] = tapEventArrayList.get(e);
-        }
-
-        return tapEvents;
+        return tapEventArrayList.toArray(new TapEvent[]{});
     }
 
 //  UI Calls
@@ -359,6 +349,40 @@ public class DB {
         }
 
         return user;
+    }
+
+    static User[] getUsers() {
+        Connection connection = getConnection();
+        Statement statement = null;
+        ArrayList<User> userArrayList = new ArrayList<>();
+
+        try {
+            statement = connection.createStatement();
+            //language=SQL
+            final String sql = "SELECT * FROM users ORDER BY username ASC;";
+            LOGGER.debug(String.format("Executing SQL Query - \"%s\"", sql));
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+                userArrayList.add(new User(resultSet.getString("username"), null));
+            }
+            LOGGER.debug(String.format("Found %d user account", userArrayList.size()));
+
+            resultSet.close();
+        } catch (SQLException e) {
+            LOGGER.error("Problem querying DB for User", e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.warn("Problem Closing Statement", e);
+                }
+            }
+        }
+
+        return userArrayList.toArray(new User[]{});
     }
 
     /**
@@ -440,12 +464,7 @@ public class DB {
             }
         }
 
-        TapEvent[] tapEvents = new TapEvent[tapEventArrayList.size()];
-        for (int e = 0; e < tapEventArrayList.size(); e++) {
-            tapEvents[e] = tapEventArrayList.get(e);
-        }
-
-        return tapEvents;
+        return tapEventArrayList.toArray(new TapEvent[]{});
     }
 
     /**
@@ -551,12 +570,7 @@ public class DB {
             }
         }
 
-        TapEvent[] tapEvents = new TapEvent[tapEventArrayList.size()];
-        for (int e = 0; e < tapEventArrayList.size(); e++) {
-            tapEvents[e] = tapEventArrayList.get(e);
-        }
-
-        return tapEvents;
+        return tapEventArrayList.toArray(new TapEvent[]{});
     }
 
     // Unit Tests

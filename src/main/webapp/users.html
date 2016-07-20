@@ -26,12 +26,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#" onclick="showPage('overview')">ITS - Tap Tracker</a>
+            <a class="navbar-brand" href="dashboard.html">ITS - Tap Tracker</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="dashboard.html">Dashboard</a></li>
-                <li><a href="devices.html">Devices &nbsp;<span class="badge" id="device-count-badge"></span></a></li>
+                <li><a href="devices.html">Devices &nbsp;<span class="badge" id="device-count-badge">0</span></a></li>
                 <li class="active"><a href="#">Users</a></li>
                 <li><a href="#" onclick="showProfile()">Update Profile</a></li>
                 <li><a href="#" onclick="logout()">Logout</a></li>
@@ -52,9 +52,6 @@
                 <div class="alert alert-danger" role="alert" id="newPassMismatch" style="display:none;">Your new
                     passwords did not match. Please try again.
                 </div>
-                <div class="alert alert-danger" role="alert" id="newPassMatch" style="display:none;">Your new password
-                    is the same as your current password.
-                </div>
                 <div class="alert alert-danger" role="alert" id="updateProfileError" style="display: none"></div>
 
                 <form class="form-horizontal" id="updateProfileForm" onsubmit="updateProfile(); return false;">
@@ -62,13 +59,6 @@
                         <label class="col-sm-4 control-label">Username:</label>
                         <div class="col-sm-8">
                             <p class="form-control-static" id="profile-username"></p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="currentPassword" class="col-sm-4 control-label">Current Password:</label>
-                        <div class="col-sm-8">
-                            <input type="password" class="form-control" id="currentPassword" placeholder="Password"
-                                   required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -114,6 +104,65 @@
 </div><!-- /.modal -->
 
 <div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li id="overview-menu" class="active"><a href="#overview" onclick="showPage('overview')">Current
+                    Users</a>
+                </li>
+                <li id="analytics-menu"><a href="#create" onclick="showPage('create')">Create New User</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="container" id="overview">
+                <div class="alert alert-success alert-dismissible" role="alert" id="user-created-alert" style="display: none">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    New User Created!
+                </div>
+                <h1 class="page-header">Users > Current Users</h1>
+                <div class="table-responsive">
+                    <table class="table table-striped sorttable" id="users-table">
+                        <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th class="sorttable_nosort"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <!--Rows will be added by doLoadDevices in users.js-->
+                    </table>
+                </div>
+            </div>
+            <div class="container" id="create">
+                <div class="alert alert-danger" role="alert" id="user-created-error" style="display: none">Something went wrong. Trying again will likely not fix the problem.</div>
+
+                <h1 class="page-header">Users > Create New User</h1>
+
+                <form class="form-horizontal" onsubmit="createUser()" id="create-user-form">
+                    <div class="form-group">
+                        <label for="create-username" class="col-sm-2 control-label">Username: </label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="create-username" placeholder="username"
+                                   autocomplete="off"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="create-password" class="col-sm-2 control-label">Password: </label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" id="create-password" placeholder="******">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="reset" class="btn btn-default">Reset</button>
+                            <button type="submit" class="btn btn-primary">Create User</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
 </div>
 
 
