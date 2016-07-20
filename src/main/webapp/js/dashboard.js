@@ -1,5 +1,5 @@
 /**
- * TODO Docs
+ * Dashboard Functions
  *
  * Created by tpaulus on 7/6/16.
  */
@@ -65,4 +65,21 @@ function doLoadRecent(eventsJSON) {
 
     }
     console.log(eventsJSON);
+function loadDevices() {
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange = function () {
+        if (xmlHttp.readyState == 4) {
+            if (xmlHttp.status == 200) doLoadDevices(JSON.parse(xmlHttp.responseText));
+        }
+    };
+
+    xmlHttp.open('get', "api/ui/devices");
+    xmlHttp.setRequestHeader("session", Cookies.get("session"));
+    xmlHttp.send();
+}
+
+function doLoadDevices(devicesJSON) {
+    $("#device-count-badge").text(devicesJSON.length);
+    sessionStorage.setItem("devices", JSON.stringify(devicesJSON));
 }

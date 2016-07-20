@@ -66,7 +66,7 @@ public class UI {
      * Fetch recent events from the DB.
      *
      * @param userToken {@link String} Authentication Token
-     * @param count {@link int} Maximum number of events to fetch. 25 if left blank or 0.
+     * @param count     {@link int} Maximum number of events to fetch. 25 if left blank or 0.
      * @return {@link Response} Array of TapEvents {@see edu.sdsu.its.taptracker.Models.TapEvent}
      */
     @Path("recent_events")
@@ -96,7 +96,7 @@ public class UI {
      *
      * @param userToken {@link String} Authentication Token
      * @param startDate {@link String} Start Date (YYYY-MM-DD)
-     * @param endDate {@link String} End Date (YYYY-MM-DD)
+     * @param endDate   {@link String} End Date (YYYY-MM-DD)
      * @return {@link Response} Array of TapEvents {@see edu.sdsu.its.taptracker.Models.TapEvent}
      */
     @Path("events")
@@ -114,6 +114,27 @@ public class UI {
         LOGGER.info(String.format("Recieved request for events in range (%s - %s) from %s", startDate, endDate, user.getUsername()));
 
         return Response.status(Response.Status.OK).entity(gson.toJson(DB.getEventsInRange(new int[]{}, startDate, endDate))).build();
+    }
+
+    /**
+     * Get all registered devices
+     *
+     * @param userToken {@link String} Authentication Token
+     * @return {@link Response} Array of all Registered Devices and their Name and last event
+     */
+    @Path("devices")
+    @GET
+    @Consumes(MediaType.WILDCARD)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDevices(@HeaderParam("session") final String userToken) {
+        User user = Session.validate(userToken);
+        Gson gson = new Gson();
+        if (user == null || user.getUsername() == null || user.getPassword() == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(gson.toJson(new SimpleMessage("Error", "Invalid Session Token"))).build();
+        }
+        LOGGER.info(String.format("Recieved request for all devices from %s", user.getUsername()));
+
+        return Response.status(Response.Status.OK).entity(gson.toJson(DB.getDevices())).build();
     }
 
 
