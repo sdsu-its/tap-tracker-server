@@ -7,7 +7,10 @@
 window.onload = function () {
     checkLogin();
     loadRecent();
-    showPage(window.location.hash.substr(1));
+    if (window.location.hash.substr(1) != "" || window.location.hash.substr(1) == currentPage) {
+        showPage(window.location.hash.substr(1));
+    }
+    loadDevices();
 };
 
 function checkLogin() {
@@ -55,16 +58,21 @@ function loadRecent() {
 
 function doLoadRecent(eventsJSON) {
     var table = document.getElementById("events-table");
+    var body = table.getElementsByTagName("tbody")[0];
     for (var e = 0; e < eventsJSON.length; e++) {
         var event = eventsJSON[e];
-        var row = table.insertRow(-1);
+        var row = body.insertRow(table.rows.length - 1);
         row.insertCell(0).innerText = event.id;
-        row.insertCell(1).innerText = event.deviceName + " (" + event.deviceID + ")";
+        var deviceCell = row.insertCell(1);
+        deviceCell.setAttribute("sorttable_customkey", event.deviceID);
+        deviceCell.innerText = event.deviceName + " (" + event.deviceID + ")";
         row.insertCell(2).innerText = event.type;
         row.insertCell(3).innerText = event.time;
 
     }
-    console.log(eventsJSON);
+    sorttable.makeSortable(table);
+}
+
 function loadDevices() {
     var xmlHttp = new XMLHttpRequest();
 
