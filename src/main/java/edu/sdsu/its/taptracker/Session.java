@@ -6,6 +6,7 @@ import edu.sdsu.its.taptracker.UI.SimpleMessage;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -58,7 +59,7 @@ public class Session {
         final Response.ResponseBuilder response;
         Gson gson = new Gson();
 
-        if (sessionToken == null) {
+        if (sessionToken == null || sessionToken.length() == 0 || "undefined".equals(sessionToken)) {
             response = Response.status(Response.Status.BAD_REQUEST).entity(gson.toJson(new SimpleMessage("Error", "Malformed Requests - Session header not set for request")));
         } else if (validate(sessionToken) == null) {
             response = Response.status(Response.Status.UNAUTHORIZED).entity(gson.toJson(new SimpleMessage("Error", "Invalid Token - The token is invalid, which is usually because the token has expired.")));
@@ -80,7 +81,13 @@ public class Session {
         LOGGER.debug(String.format("Validating Token: \"%s\"", token));
         final String decodedToken = new String(Base64.decodeBase64(token.getBytes()));
         LOGGER.debug(String.format("Decoded Token: \"%s\"", decodedToken));
-        final String decryptedToken = ENCRYPTOR.decrypt(decodedToken);
+        final String decryptedToken;
+        try {
+            decryptedToken = ENCRYPTOR.decrypt(decodedToken);
+        } catch (EncryptionOperationNotPossibleException e) {
+            LOGGER.warn("Problem decrypting session token", e);
+            return null;
+        }
         LOGGER.debug(String.format("Decrypted Token: \"%s\"", decryptedToken));
         final String[] key = decryptedToken.split("\\|");  // Split on Vertical Bars. | is a special character in RegEx.
         LOGGER.debug("Token Components: " + Arrays.toString(key));

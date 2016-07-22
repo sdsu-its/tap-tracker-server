@@ -14,6 +14,7 @@
 
     <!-- Custom styles -->
     <link href="css/nav.css" rel="stylesheet">
+    <link href="css/devices.css" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -31,7 +32,8 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="dashboard.html">Dashboard</a></li>
-                <li class="active"><a href="#">Devices &nbsp;<span class="badge" id="device-count-badge">0</span></a></li>
+                <li class="active"><a href="#">Devices &nbsp;<span class="badge" id="device-count-badge">0</span></a>
+                </li>
                 <li><a href="users.html">Users</a></li>
                 <li><a href="#" onclick="showProfile()">Update Profile</a></li>
                 <li><a href="#" onclick="logout()">Logout</a></li>
@@ -103,7 +105,118 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade" tabindex="-1" role="dialog" id="updateDeviceModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Update Profile</h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert" id="device_update_error_alert" style="display: none">
+                    Something went wrong updating the device. Trying again likely will not solve this problem.
+                </div>
+                <form class="form-horizontal" id="updateDeviceForm" onsubmit="updateDevice(); return false;">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Device ID:</label>
+                        <div class="col-sm-9">
+                            <p class="form-control-static" id="device_id_update"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="device_name_update" class="col-sm-3 control-label">Device Name:</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="device_name_update" required>
+                        </div>
+                    </div>
+                    <input type="submit" style="display: none">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="$('#updateDeviceForm').submit();">Update
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 <div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li id="overview-menu" class="active"><a href="#overview" onclick="showPage('overview')">Active
+                    Devices</a>
+                </li>
+                <li id="analytics-menu"><a href="#create" onclick="showPage('create')">Create New Device</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="container" id="overview">
+                <h1 class="page-header">Devices > Active Devices</h1>
+                <div class="alert alert-success alert-dismissible" role="alert" id="device_update_success_alert"
+                     style="display: none">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    Device Updated Successfully.
+                </div>
+                <div class="alert alert-success alert-dismissible" role="alert" id="device_create_success_alert"
+                     style="display: none">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    Device Created Successfully.
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped sorttable" id="devices-table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Device Name</th>
+                            <th>Last Event</th>
+                            <th class="sorttable_nosort"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <!--Rows will be added by updateTable in devices.js-->
+                    </table>
+                </div>
+            </div>
+            <div class="container" id="create">
+                <h1 class="page-header">Devices > Active Devices</h1>
+                <div class="alert alert-danger" role="alert" id="device_create_overlap_alert" style="display: none">That
+                    device ID is already in use.
+                </div>
+                <div class="alert alert-danger" role="alert" id="device_create_error_alert" style="display: none">
+                    Something went wrong creating the device. Trying again likely will not solve this problem.
+                </div>
+
+                <form class="form-horizontal" onsubmit="createDevice(); return false;" id="create-device-form">
+                    <div class="form-group">
+                        <label for="create-device-id" class="col-sm-2 control-label">Device ID: </label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="create-device-id" placeholder="42"
+                                   min="1" step="1" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="create-device-name" class="col-sm-2 control-label">Password: </label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="create-device-name" placeholder="Foo">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="reset" class="btn btn-default">Reset</button>
+                            <button type="submit" class="btn btn-primary">Create Device</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Bootstrap core JavaScript

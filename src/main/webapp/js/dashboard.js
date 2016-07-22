@@ -14,7 +14,7 @@ window.onload = function () {
 };
 
 function loadRecent(forceRefresh) {
-    if (!forceRefresh && sessionStorage.getItem("events")) {
+    if (!forceRefresh && sessionStorage.getItem("events") && sessionStorage.getItem("events") != "undefined") {
         doLoadRecent(JSON.parse(sessionStorage.getItem("events")));
     } else {
 

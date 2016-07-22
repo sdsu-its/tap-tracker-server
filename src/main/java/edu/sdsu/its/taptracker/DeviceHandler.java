@@ -18,7 +18,7 @@ import java.util.TimeZone;
  * @author Tom Paulus
  *         Created on 7/5/16.
  */
-@Path("device")
+@Path("client")
 public class DeviceHandler {
     private static final Logger LOGGER = Logger.getLogger(DeviceHandler.class);
 
@@ -36,15 +36,11 @@ public class DeviceHandler {
         LOGGER.info("Device Start Up: " + deviceID);
         Device device = DB.getDevice(deviceID);
         if (device == null) {
-            LOGGER.info("Creating New Device - ID: " + deviceID);
-            device = new Device(deviceID);
-            DB.createDevice(device);
-
-            if (device.name == null) device.name = "";
-            return Response.status(Response.Status.CREATED).build();
+            LOGGER.info("Unknown Device: " + deviceID);
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Unknown Device. Register Device with Admin Panel.").build();
         }
-        if (device.name == null) device.name = "";
-        return Response.status(Response.Status.OK).entity(device.name).build();
+        if (device.getName() == null) device.setName("");
+        return Response.status(Response.Status.OK).entity(device.getName()).build();
     }
 
     /**
@@ -60,7 +56,7 @@ public class DeviceHandler {
     public Response getCounts(@QueryParam("id") final int deviceID) {
         if (DB.getDevice(deviceID) == null) {
             LOGGER.warn("Unknown Device ID - ID: " + deviceID);
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Unknown Device. Restart Device to register with API.").build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Unknown Device. Register Device with Admin Panel.").build();
         }
 
         TapEvent[] events = DB.getDailyEventsByDevice(deviceID);

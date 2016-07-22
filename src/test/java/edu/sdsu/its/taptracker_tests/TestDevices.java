@@ -1,7 +1,6 @@
 package edu.sdsu.its.taptracker_tests;
 
 import edu.sdsu.its.taptracker.DB;
-import edu.sdsu.its.taptracker.DeviceHandler;
 import edu.sdsu.its.taptracker.Models.Device;
 import edu.sdsu.its.taptracker.Models.TapEvent;
 import org.apache.log4j.Logger;
@@ -43,7 +42,7 @@ public class TestDevices {
     }
 
 
-     private static void logEvent() throws Exception {
+    private static void logEvent() throws Exception {
         LOGGER.info("Creating 2 test events");
         LOGGER.debug("Creating new Type 1 event for DeviceID: " + DEVICE_ID);
         DB.logEvent(new TapEvent(DEVICE_ID, 1));

@@ -9,9 +9,9 @@ import java.sql.Timestamp;
  *         Created on 7/18/16.
  */
 public class Device {
-    public int id;
-    public String name;
-    public Timestamp lastEvent;
+    int id;
+    String name;
+    Timestamp lastEvent;
 
     public Device(int id) {
         this.id = id;
@@ -34,6 +34,10 @@ public class Device {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

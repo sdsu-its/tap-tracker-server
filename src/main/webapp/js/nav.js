@@ -96,7 +96,7 @@ function logout() {
 }
 
 function loadDevices(forceRefresh) {
-    if (!forceRefresh && sessionStorage.getItem("devices")) {
+    if (!forceRefresh && sessionStorage.getItem("devices") && sessionStorage.getItem("devices") != "undefined") {
         doLoadDevices(JSON.parse(sessionStorage.getItem("devices")));
     }
     else {

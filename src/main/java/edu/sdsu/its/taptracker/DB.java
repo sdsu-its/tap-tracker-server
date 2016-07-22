@@ -228,7 +228,7 @@ public class DB {
      */
     public static void createDevice(final Device device) {
         //language=SQL
-        executeStatement("INSERT INTO devices (id, name) VALUES (" + device.id + ", '" + sanitize(device.name != null ? device.name : "") + "');");
+        executeStatement("INSERT INTO devices (id, name) VALUES (" + device.getId() + ", '" + sanitize(device.getName() != null ? device.getName() : "") + "');");
     }
 
     /**
@@ -238,7 +238,7 @@ public class DB {
      */
     public static void updateDevice(final Device device) {
         //language=SQL
-        executeStatement("UPDATE devices SET name='" + sanitize(device.name) + "' WHERE id=" + device.id + ";");
+        executeStatement("UPDATE devices SET name='" + sanitize(device.getName()) + "' WHERE id=" + device.getId() + ";");
     }
 
     public static TapEvent[] getDailyEventsByDevice(final int deviceID) {
