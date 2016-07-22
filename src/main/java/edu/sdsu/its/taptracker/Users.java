@@ -44,7 +44,7 @@ public class Users {
      * Usernames cannot be changed since they are used as the primary key in the Database.
      *
      * @param userToken {@link String} Authentication Token
-     * @param payload {@link String} UpdateUser JSON {@see User}
+     * @param payload   {@link String} UpdateUser JSON {@see User}
      * @return {@link Response} Message if operation was successful
      */
     @Path("update")
@@ -52,7 +52,7 @@ public class Users {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(@HeaderParam("session") final String userToken,
-                               final String payload){
+                               final String payload) {
 
         User user = Session.validate(userToken);
         Gson gson = new Gson();
@@ -62,11 +62,15 @@ public class Users {
         LOGGER.info("Recieved to update password from " + user.getUsername());
 
         User updateUser = gson.fromJson(payload, User.class);
-
-        DB.updateUser(updateUser);
-        LOGGER.debug(String.format("\"%s\"'s password was updated successfully", updateUser.getUsername()));
-
-        return Response.status(Response.Status.OK).entity(gson.toJson(new UI.SimpleMessage("User Updated Successfully"))).build();
+        if (updateUser != null && updateUser.getUsername() != null && updateUser.getUsername().length() > 0 &&
+                updateUser.getPassword() != null && updateUser.getPassword().length() > 0) {
+            DB.updateUser(updateUser);
+            LOGGER.debug(String.format("\"%s\"'s password was updated successfully", updateUser.getUsername()));
+            return Response.status(Response.Status.OK).entity(gson.toJson(new UI.SimpleMessage("User Updated Successfully"))).build();
+        } else {
+            LOGGER.warn("Incomplete User Object, Cannot Update.\n" + payload);
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(gson.toJson(new UI.SimpleMessage("Error", "Incomplete User Object"))).build();
+        }
     }
 
     /**
@@ -74,7 +78,7 @@ public class Users {
      * Once a user has been created, their username cannot be changed, since it is used as the primary key in the Database.
      *
      * @param userToken {@link String} Authentication Token
-     * @param payload {@link String} User JSON {@see User}
+     * @param payload   {@link String} User JSON {@see User}
      * @return {@link Response} Message if operation was successful
      */
     @Path("create")
@@ -91,10 +95,15 @@ public class Users {
         }
 
         User createUser = gson.fromJson(payload, User.class);
-        LOGGER.info(String.format("Recieved to create user(%s) from %s", createUser.getUsername(), user.getUsername()));
+        if (createUser != null && createUser.getUsername() != null && createUser.getUsername().length() > 0 &&
+                createUser.getPassword() != null && createUser.getPassword().length() > 0) {
+            LOGGER.info(String.format("Recieved to create user(%s) from %s", createUser.getUsername(), user.getUsername()));
 
-        DB.createUser(createUser);
-
-        return Response.status(Response.Status.CREATED).build();
+            DB.createUser(createUser);
+            return Response.status(Response.Status.CREATED).build();
+        } else {
+            LOGGER.warn("Incomplete User Object, Cannot Create.\n" + payload);
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(gson.toJson(new UI.SimpleMessage("Error", "Incomplete User Object"))).build();
+        }
     }
 }
