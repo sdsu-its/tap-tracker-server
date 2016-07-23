@@ -11,6 +11,7 @@ window.onload = function () {
         showPage(window.location.hash.substr(1));
     }
     loadDevices(false);
+    loadDeviceIDExport();
 };
 
 function loadRecent(forceRefresh) {
@@ -50,4 +51,38 @@ function doLoadRecent(eventsJSON) {
 
     }
     sorttable.makeSortable(table);
+}
+
+function loadDeviceIDExport() {
+    var devices = JSON.parse(sessionStorage.getItem("devices"));
+    var deviceSelectField = $('#export-IDRestrictionsSelect');
+
+    for (var d = 0; d < devices.length; d++) {
+        var device = devices[d];
+        deviceSelectField.append($('<option>', {value: device.id, text: device.id + " (" + device.name + ")"}))
+    }
+}
+
+function updateExportFormRestrictions() {
+    if ($('#export-RestrictionTypeSelect').val() == "1") {
+        $('#export-IDRestrictions').show();
+    } else {
+        $('#export-IDRestrictions').hide();
+    }
+}
+
+function doDownload() {
+    var url = "api/ui/csv_export?";
+    url += "start=" + $('#export-startDate').val();
+    url += "&end=" + $('#export-endDate').val();
+
+
+    if ($('#export-RestrictionTypeSelect').val() == "1") {
+        url += "&ids=" + JSON.stringify($('#export-IDRestrictionsSelect').val().map(Number));
+    }
+
+    var iframe = document.getElementById('download');
+    iframe.src = url;
+
+    $('#exportForm')[0].reset();
 }

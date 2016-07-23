@@ -14,6 +14,7 @@
 
     <!-- Custom styles -->
     <link href="css/nav.css" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
 </head>
 
 <body>
@@ -165,6 +166,51 @@
 
             <div class="container" id="export">
                 <h1 class="page-header">Dashboard > Export</h1>
+
+                <form class="form-horizontal" onsubmit="doDownload(); return false;"
+                      onreset="$('#export-IDRestrictions').hide();" id="exportForm">
+                    <div class="form-group">
+                        <label for="export-startDate" class="col-sm-3 control-label">Start Date</label>
+                        <div class="col-sm-9">
+                            <input type="date" class="form-control" id="export-startDate" placeholder="mm/dd/yyyy"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="export-endDate" class="col-sm-3 control-label">End Date</label>
+                        <div class="col-sm-9">
+                            <input type="date" class="form-control" id="export-endDate" placeholder="mm/dd/yyyy"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="export-endDate" class="col-sm-3 control-label">Device Restrictions</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="export-RestrictionTypeSelect" title="Restriction Type"
+                                    onchange="updateExportFormRestrictions()">
+                                <option value="0">All Devices</option>
+                                <option value="1">Restrict by ID</option>
+                            </select>
+
+                            <div id="export-IDRestrictions" style="display: none">
+                                <select multiple class="form-control" id="export-IDRestrictionsSelect"
+                                        title="ID Restriction">
+                                    <!-- Options will be added by loadDeviceIDExport in dashboard.js -->
+                                </select>
+                                <span id="helpBlock" class="help-block">Use Shift to select a range of devices. Use CMD/CTRL to select individual devices.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <button type="reset" class="btn btn-default">Reset</button>
+                            <button type="submit" class="btn btn-primary">Download CSV</button>
+                        </div>
+                    </div>
+                </form>
+
+
+                <iframe id="download" style="display:none;"></iframe>
 
             </div>
 

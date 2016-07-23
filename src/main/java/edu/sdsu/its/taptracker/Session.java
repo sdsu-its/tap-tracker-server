@@ -59,7 +59,7 @@ public class Session {
         final Response.ResponseBuilder response;
         Gson gson = new Gson();
 
-        if (sessionToken == null || sessionToken.length() == 0 || "undefined".equals(sessionToken)) {
+        if (sessionToken == null || sessionToken.length() == 0 || "undefined".equals(sessionToken) || "null".equals(sessionToken)) {
             response = Response.status(Response.Status.BAD_REQUEST).entity(gson.toJson(new SimpleMessage("Error", "Malformed Requests - Session header not set for request")));
         } else if (validate(sessionToken) == null) {
             response = Response.status(Response.Status.UNAUTHORIZED).entity(gson.toJson(new SimpleMessage("Error", "Invalid Token - The token is invalid, which is usually because the token has expired.")));

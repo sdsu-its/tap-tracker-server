@@ -141,27 +141,20 @@ public class UI {
     /**
      * Export a CSV of events that meet specified device and date parameters.
      *
-     * @param userToken {@link String} Authentication Token
      * @param deviceIDs {@link String} List of Device IDs to filter. If blank, all IDs will be selected.
      * @param startDate {@link String} Start Date (YYYY-MM-DD)
-     * @param endDate {@link String} End Date (YYYY-MM-DD)
+     * @param endDate   {@link String} End Date (YYYY-MM-DD)
      * @return {@link Response} CSV File Download
      */
     @Path("csv_export")
     @GET
     @Consumes(MediaType.WILDCARD)
     @Produces("text/csv")
-    public Response exportCSV(@HeaderParam("session") final String userToken,
-                              @QueryParam("ids") final String deviceIDs,
+    public Response exportCSV(@QueryParam("ids") final String deviceIDs,
                               @QueryParam("start") final String startDate,
                               @QueryParam("end") final String endDate) {
 
-        User user = Session.validate(userToken);
         Gson gson = new Gson();
-        if (user == null || user.getUsername() == null || user.getPassword() == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(gson.toJson(new SimpleMessage("Error", "Invalid Session Token"))).build();
-        }
-        LOGGER.info("Recieved request for CSV Export from " + user.getUsername());
         LOGGER.debug(String.format("Generating CSV Export report for:\n" +
                 "IDs: %s\n" +
                 "Start: %s\n" +
