@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
         version="3.1">
-    <display-name>Tap Tracker - Tracking events</display-name>
+    <display-name>Business Activity Monitoring &amp; Analytics</display-name>
 
     <servlet>
         <servlet-name>edu.sdsu.its.taptracker</servlet-name>
@@ -17,7 +17,9 @@
 
         <load-on-startup>1</load-on-startup>
     </servlet>
-
+    <listener>
+        <listener-class>edu.sdsu.its.taptracker.Init</listener-class>
+    </listener>
     <servlet-mapping>
         <servlet-name>edu.sdsu.its.taptracker</servlet-name>
         <url-pattern>/api/*</url-pattern>

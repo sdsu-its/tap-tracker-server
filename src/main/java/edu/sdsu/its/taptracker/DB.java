@@ -596,19 +596,5 @@ public class DB {
 
         TimeUnit.SECONDS.sleep(1); // Execute statements are executed asynchronously and can take a few seconds to execute
     }
-
-    public static void main(String[] args) {
-        System.out.println("Create First User for Checkout");
-
-        final Scanner scanner = new Scanner(System.in);
-        System.out.println("Username:");
-        final String username = scanner.next();
-
-        System.out.println("Password:");
-        final String password = scanner.next();
-
-        User user = new User(username, password);
-        createUser(user);
-    }
 }
 
