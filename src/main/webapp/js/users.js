@@ -52,10 +52,22 @@ function showUserProfile(username) {
 
 function createUser() {
     $('#user-created-error').hide();
+    const usernameOverlapError = $('#username-overlap-error');
+    usernameOverlapError.hide();
 
     if (confirm("Are you sure?")) {
-        var json = '{"username":"' + $('#create-username').val() + '","password":"' + $('#create-password').val() + '"}';
+        var usersJSON = JSON.parse(sessionStorage.getItem("users"));
+        const createUsername = $('#create-username');
+        var json = '{"username":"' + createUsername.val() + '","password":"' + $('#create-password').val() + '"}';
 
+        for (var u = 0; u < usersJSON.length; u++) {
+            var user = usersJSON[u];
+            if (user.username == createUsername.val()) {
+                usernameOverlapError.show();
+                createUsername.val('');
+                return;
+            }
+        }
 
         var xmlHttp = new XMLHttpRequest();
 
@@ -63,7 +75,8 @@ function createUser() {
             if (xmlHttp.readyState == 4) {
                 if (xmlHttp.status == 201) {
                     var username_field = $('#create-username');
-                    doLoadUsers({"username": username_field.val()});
+                    doLoadUsers([{"username": username_field.val()}]);
+                    loadUsers(true);
 
                     $('#user-created-alert').show();
                     showPage('overview');
@@ -73,13 +86,11 @@ function createUser() {
                     }, 7000);
                     username_field.val('');
                     $('#create-password').val('');
-                }
-                else if (xmlHttp.status == 400) {
-                    $('#device_create_overlap_alert').show();
-                    $('#')
-                }
-                else {
-                    $('#device_update_error_alert').show();
+                } else if (xmlHttp.status == 400) {
+                    $('#username-overlap-error').show();
+                    $('#create-username').val('');
+                } else {
+                    $('#user-created-error').show();
                 }
             }
         };

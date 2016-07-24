@@ -99,8 +99,14 @@ public class Users {
                 createUser.getPassword() != null && createUser.getPassword().length() > 0) {
             LOGGER.info(String.format("Recieved to create user(%s) from %s", createUser.getUsername(), user.getUsername()));
 
-            DB.createUser(createUser);
-            return Response.status(Response.Status.CREATED).build();
+            if (DB.getUser(createUser.getUsername()) != null) {
+                LOGGER.warn(String.format("Username overlap, cannot create \"%s\" - Already exists in DB", createUser.getUsername()));
+                return Response.status(Response.Status.BAD_REQUEST).entity(gson.toJson(new UI.SimpleMessage("Error", "Username Overlap"))).build();
+
+            } else {
+                DB.createUser(createUser);
+                return Response.status(Response.Status.CREATED).build();
+            }
         } else {
             LOGGER.warn("Incomplete User Object, Cannot Create.\n" + payload);
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(gson.toJson(new UI.SimpleMessage("Error", "Incomplete User Object"))).build();

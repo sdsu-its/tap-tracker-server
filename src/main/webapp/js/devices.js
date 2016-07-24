@@ -41,36 +41,8 @@ function updateTable(devicesJSON) {
         var dateCell = row.insertCell(2);
         if (device.lastEvent != null) {
             dateCell.innerText = device.lastEvent;
-            var date = new Date(device.lastEvent);
-            var mm = date.getMonth() + 1; // getMonth() is zero-based
-            var dd = date.getDate();
-            var hh = date.getHours();
-            var min = date.getMinutes();
-            var ss = date.getSeconds();
-
-            var sort_key = date.getFullYear();
-            if (Math.floor(mm / 10) == 0) {
-                sort_key += "0";
-            }
-            sort_key += mm;
-            if (Math.floor(dd / 10) == 0) {
-                sort_key += "0";
-            }
-            sort_key += dd;
-            if (Math.floor(hh / 10) == 0) {
-                sort_key += "0";
-            }
-            sort_key += hh;
-            if (Math.floor(min / 10) == 0) {
-                sort_key += "0";
-            }
-            sort_key += min;
-            if (Math.floor(ss / 10) == 0) {
-                sort_key += "0";
-            }
-            sort_key += ss;
-
-            dateCell.setAttribute("sorttable_customkey", sort_key);
+            var date = moment(device.lastEvent);
+            dateCell.setAttribute("sorttable_customkey", date.format("YYYYMMDDHHmmss"));
         } else {
             dateCell.innerText = "No Events Recorded";
             dateCell.className += "noInfo";
