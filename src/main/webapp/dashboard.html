@@ -138,29 +138,31 @@
 
             <div class="container" id="analytics">
                 <h1 class="page-header">Dashboard > Analytics</h1>
-                <form class="form-inline" onsubmit="updateAnalytics()">
+                <form class="form-inline" onsubmit="updateAnalytics(); return false">
                     <div class="form-group">
                         <label for="analytics-start-date">Start Date</label>
-                        <input type="date" class="form-control" id="analytics-start-date" placeholder="mm/dd/yyyy">
+                        <input type="date" class="form-control" id="analytics-start-date" placeholder="mm/dd/yyyy" required>
                     </div>
                     <div class="form-group">
                         <label for="analytics-end-date">End Date</label>
-                        <input type="date" class="form-control" id="analytics-end-date" placeholder="mm/dd/yyyy">
+                        <input type="date" class="form-control" id="analytics-end-date" placeholder="mm/dd/yyyy" required>
                     </div>
                     <div class="form-group">
                         <label for="analytics-breakdown-type">Breakdown Type</label>
                         <select class="form-control" id="analytics-breakdown-type">
                             <option value="1">Hour</option>
-                            <option value="2">Day</option>
+                            <option value="2" selected>Day</option>
                             <option value="3">Week</option>
-                            <option value="4">Month</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-default">Update</button>
                 </form>
 
-                <h2 class="sub-header">Hourly Activity <span class="by-breakdown"></span></h2>
-                <div id="curve_chart" style="width: 900px; height: 500px"></div>
+                <h2 class="sub-header">Activity <span class="by-breakdown"></span></h2>
+                <canvas id="aggregateLineChart" width="300" height="150"></canvas>
+
+                <h2 class="sub-header">Station Activity</h2>
+                <canvas id="activityBarChart" width="300" height="100"></canvas>
             </div>
 
 
@@ -227,10 +229,17 @@
         integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
         crossorigin="anonymous"></script>
 
-<!--<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>-->
+
+
 <script src="js/js.cookie.js"></script>
 <script src="js/sorttable.js"></script>
+<script src="js/moment.js"></script>
+
+<!-- Charting Library (http://www.chartjs.org/)-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.min.js"></script>
+
 <!--Page JS-->
+<script src="js/colors.js"></script>
 <script src="js/nav.js"></script>
 <script src="js/dashboard.js"></script>
 <script src="js/analytics.js"></script>

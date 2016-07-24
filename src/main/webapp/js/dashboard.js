@@ -11,8 +11,18 @@ window.onload = function () {
         showPage(window.location.hash.substr(1));
     }
     loadDevices(false);
-    loadDeviceIDExport();
+    readyLoadDeviceIDExport();
 };
+
+function readyLoadDeviceIDExport() {
+    if (!sessionStorage.getItem("devices")) {
+        setTimeout(function () {
+            readyLoadDeviceIDExport();
+        }, 250);
+    } else {
+        loadDeviceIDExport();
+    }
+}
 
 function loadRecent(forceRefresh) {
     if (!forceRefresh && sessionStorage.getItem("events") && sessionStorage.getItem("events") != "undefined") {
