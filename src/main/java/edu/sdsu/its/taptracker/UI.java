@@ -2,7 +2,6 @@ package edu.sdsu.its.taptracker;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import edu.sdsu.its.taptracker.Models.Login;
 import edu.sdsu.its.taptracker.Models.User;
 import org.apache.log4j.Logger;
 
@@ -30,7 +29,7 @@ public class UI {
      * Login a User. Uses their username and password to verify their identity and retrieve their user information.
      * Returns a Login Object with their User Information and Session Token.
      *
-     * @param payload {@link String} JSON Formatted Login Object {@see Models.Login}
+     * @param payload {@link String} JSON Formatted Login Object {@see Models.User}
      * @return {@link Response} Login JSON (With User and Session Information)
      */
     @Path("login")
@@ -43,18 +42,17 @@ public class UI {
         final Gson gson = builder.create();
 
         LOGGER.debug("Recieved Login Request. Payload - \n" + payload);
-        Login login = gson.fromJson(payload, Login.class);
-        LOGGER.debug("Login Requested for User: " + login.getUsername());
+        User user = gson.fromJson(payload, User.class);
+        LOGGER.debug("Login Requested for User: " + user.getUsername());
         Response.ResponseBuilder response;
 
-        User user = DB.checkPassword(login.getUsername(), login.getPassword());
+        user = DB.checkPassword(user.getUsername(), user.getPassword());
         if (user != null) {
             LOGGER.debug("Valid User - " + user.getUsername());
-            login.user = user;
             Session session = new Session(user);
-            LOGGER.debug(String.format("Session token for \"%s\" = \"%s\"", login.getUsername(), session.getToken()));
+            LOGGER.debug(String.format("Session token for \"%s\" = \"%s\"", user.getUsername(), session.getToken()));
 
-            response = Response.status(Response.Status.OK).entity(gson.toJson(login)).header("session", session.getToken());
+            response = Response.status(Response.Status.OK).entity(gson.toJson(user)).header("session", session.getToken());
         } else {
             response = Response.status(Response.Status.FORBIDDEN).entity(gson.toJson(new SimpleMessage("Error", "Username or Password are incorrect")));
         }
