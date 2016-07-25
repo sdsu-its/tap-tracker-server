@@ -34,7 +34,7 @@ function showPage(name) {
 }
 
 function showProfile() {
-    $('#profile-username').text(Cookies.getJSON("user").user.username);
+    $('#profile-username').text(Cookies.getJSON("user").username);
     $('#profileModal').modal('show');
 }
 
@@ -76,7 +76,6 @@ function updateProfile() {
         xmlHttp.setRequestHeader("Content-type", "application/json");
 
         xmlHttp.send(json);
-
     }
 }
 
