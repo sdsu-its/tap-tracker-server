@@ -24,7 +24,6 @@ public class Users {
      * @param userToken {@link String} Authentication Token
      * @return {@link Response} List of Users as JSON Array
      */
-    @Path("list")
     @GET
     @Consumes(MediaType.WILDCARD)
     @Produces(MediaType.APPLICATION_JSON)
@@ -47,8 +46,7 @@ public class Users {
      * @param payload   {@link String} UpdateUser JSON {@see User}
      * @return {@link Response} Message if operation was successful
      */
-    @Path("update")
-    @POST
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(@HeaderParam("session") final String userToken,
@@ -81,7 +79,6 @@ public class Users {
      * @param payload   {@link String} User JSON {@see User}
      * @return {@link Response} Message if operation was successful
      */
-    @Path("create")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

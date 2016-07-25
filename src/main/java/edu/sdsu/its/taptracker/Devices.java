@@ -26,8 +26,7 @@ public class Devices {
      * @param payload   {@link String} Device JSON {@see Device}
      * @return {@link Response} Message on status of operation as JSON
      */
-    @Path("update")
-    @POST
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateDevice(@HeaderParam("session") final String userToken,
@@ -61,7 +60,6 @@ public class Devices {
      * @param payload   {@link String} Device JSON {@see Device}
      * @return {@link Response} Message on status of operation as JSON
      */
-    @Path("create")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

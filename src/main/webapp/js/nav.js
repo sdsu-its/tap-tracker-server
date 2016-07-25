@@ -71,7 +71,7 @@ function updateProfile() {
             }
         };
 
-        xmlHttp.open('post', "api/user/update");
+        xmlHttp.open('put', "api/user");
         xmlHttp.setRequestHeader("session", Cookies.get("session"));
         xmlHttp.setRequestHeader("Content-type", "application/json");
 

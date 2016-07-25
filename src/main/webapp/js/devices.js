@@ -99,7 +99,7 @@ function updateDevice() {
         }
     };
 
-    xmlHttp.open('post', "api/device/update");
+    xmlHttp.open('put', "api/device");
     xmlHttp.setRequestHeader("session", Cookies.get("session"));
     xmlHttp.setRequestHeader("Content-type", "application/json");
     xmlHttp.send(json);
@@ -157,7 +157,7 @@ function createDevice() {
             }
         };
 
-        xmlHttp.open('post', "api/device/create");
+        xmlHttp.open('post', "api/device");
         xmlHttp.setRequestHeader("session", Cookies.get("session"));
         xmlHttp.setRequestHeader("Content-type", "application/json");
         xmlHttp.send(json);

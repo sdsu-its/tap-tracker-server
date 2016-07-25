@@ -25,7 +25,7 @@ function loadUsers(forceRefresh) {
             }
         };
 
-        xmlHttp.open('get', "api/user/list");
+        xmlHttp.open('get', "api/user");
         xmlHttp.setRequestHeader("session", Cookies.get("session"));
         xmlHttp.send();
     }
@@ -95,7 +95,7 @@ function createUser() {
             }
         };
 
-        xmlHttp.open('post', "api/user/create");
+        xmlHttp.open('post', "api/user");
         xmlHttp.setRequestHeader("session", Cookies.get("session"));
         xmlHttp.setRequestHeader("Content-type", "application/json");
         xmlHttp.send(json);
