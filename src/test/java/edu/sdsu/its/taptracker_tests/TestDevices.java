@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -84,7 +86,8 @@ public class TestDevices {
     @Test
     public void getDevice() throws Exception {
         Device device = DB.getDevice(DEVICE_ID);
-        assertTrue(String.format("Created Device (%d) could not be found", DEVICE_ID), device != null && device.getId() != 0);
+        assertNotNull(String.format("Created Device (%d) could not be found", DEVICE_ID), device);
+        assertTrue(String.format("Created Device (%d) could not be found", DEVICE_ID), device.getId() != 0);
     }
 
     @Test
@@ -95,7 +98,7 @@ public class TestDevices {
 
         TimeUnit.SECONDS.sleep(1); // Execute statements are executed asynchronously and can take a few seconds to execute
 
-        assertTrue("Device Name was NOT Updated", DEVICE_NAME.equals(DB.getDevice(DEVICE_ID).getName()));
+        assertEquals("Device Name was NOT Updated", DEVICE_NAME, DB.getDevice(DEVICE_ID).getName());
     }
 
     @Test

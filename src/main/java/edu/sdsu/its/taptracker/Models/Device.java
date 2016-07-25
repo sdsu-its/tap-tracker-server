@@ -47,4 +47,20 @@ public class Device {
                 ", name='" + name + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Device device = (Device) o;
+
+        return id == device.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 }

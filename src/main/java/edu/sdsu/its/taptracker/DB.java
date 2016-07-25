@@ -12,7 +12,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -292,7 +291,7 @@ public class DB {
      * @param password {@link String} User's Password
      * @return {@link User} User if credentials are valid, Null otherwise
      */
-    static User checkPassword(final String username, final String password) {
+    public static User checkPassword(final String username, final String password) {
         User user = getUser(username);
 
         if (user == null) {
@@ -317,7 +316,7 @@ public class DB {
      * @param username {@link String} Username
      * @return {@link User} User Object (Username and Password)
      */
-    static User getUser(final String username) {
+    public static User getUser(final String username) {
         Connection connection = getConnection();
         Statement statement = null;
         User user = null;
@@ -351,7 +350,7 @@ public class DB {
         return user;
     }
 
-    static User[] getUsers() {
+    public static User[] getUsers() {
         Connection connection = getConnection();
         Statement statement = null;
         ArrayList<User> userArrayList = new ArrayList<>();
@@ -366,7 +365,7 @@ public class DB {
             while (resultSet.next()) {
                 userArrayList.add(new User(resultSet.getString("username"), null));
             }
-            LOGGER.debug(String.format("Found %d user account", userArrayList.size()));
+            LOGGER.debug(String.format("Found %d user accounts", userArrayList.size()));
 
             resultSet.close();
         } catch (SQLException e) {
@@ -391,7 +390,7 @@ public class DB {
      * @param user {@link User} User to Update with Updated Fields
      * @return {@link User} Updated User
      */
-    static User updateUser(final User user) {
+    public static User updateUser(final User user) {
         user.setPassword(PASSWORD_ENCRYPTOR.encryptPassword(user.getPassword()));
 
         //language=SQL
@@ -405,11 +404,25 @@ public class DB {
      * @param user {@link User} User to Create
      * @return {@link User} Crated User
      */
-    static User createUser(final User user) {
+    public static User createUser(final User user) {
         user.setPassword(PASSWORD_ENCRYPTOR.encryptPassword(user.getPassword()));
 
         //language=SQL
         executeStatement("INSERT INTO users (username, password) VALUES ('" + user.getUsername() + "', '" + user.getPassword() + "');");
+        return user;
+    }
+
+    /**
+     * Delete a UI User. Use with caution, as a deleted user cannot be restored.
+     *
+     * @param user {@link User} User to Create
+     * @return {@link User} Crated User
+     */
+    public static User deleteUser(final User user) {
+        LOGGER.warn("Deleting \"%s\" from the Users Table/");
+
+        //language=SQL
+        executeStatement("DELETE FROM users WHERE `username` = '" + user.getUsername() + "';");
         return user;
     }
 

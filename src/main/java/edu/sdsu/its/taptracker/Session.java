@@ -34,7 +34,7 @@ public class Session {
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private long expires;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "WeakerAccess"})
     public Session() {
         // Leave Blank, Used by Jersey for API Endpoint.
     }
@@ -125,5 +125,9 @@ public class Session {
 
     public String getToken() {
         return this.token;
+    }
+
+    public long getExpires() {
+        return expires;
     }
 }

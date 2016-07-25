@@ -28,9 +28,9 @@ public class KeyServ {
         LOGGER.debug("ENV.KSKEY=" + key);
         LOGGER.debug("ENV.TAP_APP=" + name);
 
-        assertTrue("Empty KS URL", path != null && path.length() > 0);
-        assertTrue("Empty KS API Key", key != null && key.length() > 0);
-        assertTrue("Empty App Name", name != null && name.length() > 0);
+        assertTrue("Empty KS URL", isDefined(path));
+        assertTrue("Empty KS API Key", isDefined(key));
+        assertTrue("Empty App Name", isDefined(name));
     }
 
     /**
