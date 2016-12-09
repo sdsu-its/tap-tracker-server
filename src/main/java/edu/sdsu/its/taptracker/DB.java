@@ -24,10 +24,6 @@ public class DB {
     private static final Logger LOGGER = Logger.getLogger(DB.class);
     private static final StrongPasswordEncryptor PASSWORD_ENCRYPTOR = new StrongPasswordEncryptor();
 
-    private static final String db_url = Param.getParam("db-url");
-    private static final String db_user = Param.getParam("db-user");
-    private static final String db_password = Param.getParam("db-password");
-
     /**
      * Create and return a new DB Connection
      * Don't forget to close the connection!
@@ -38,7 +34,18 @@ public class DB {
         Connection conn = null;
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-            conn = DriverManager.getConnection(db_url, db_user, db_password);
+            final String db_url = Vault.getParam("db-url");
+            final String db_user = Vault.getParam("db-user");
+            final String db_pass = Vault.getParam("db-password");
+
+            if (db_url != null && db_user != null && db_pass != null) {
+                conn = DriverManager.getConnection(
+                        db_url,
+                        db_user,
+                        db_pass);
+            } else {
+                LOGGER.warn("Not all DB Credentials retrieved from Vault");
+            }
         } catch (Exception e) {
             LOGGER.fatal("Problem Initializing DB Connection", e);
         }

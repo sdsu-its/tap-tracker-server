@@ -23,9 +23,9 @@ import java.util.UUID;
  */
 @Path("session")
 public class Session {
-    final private static String PROJECT_TOKEN = Param.getParam("project_token");
-    final private static String TOKEN_CYPHER = Param.getParam("token_cypher");
-    final private static long TTL = Long.parseLong(Param.getParam("token_ttl"));
+    final private static String PROJECT_TOKEN = Vault.getParam("project_token");
+    final private static String TOKEN_CYPHER = Vault.getParam("token_cypher");
+    final private static long TTL = Long.parseLong(Vault.getParam("token_ttl"));
 
     final private static Logger LOGGER = Logger.getLogger(Session.class);
     final private static StandardPBEStringEncryptor ENCRYPTOR = new StandardPBEStringEncryptor();
