@@ -51,10 +51,11 @@ CREATE TABLE users (
 );
 ```
 
-### KeyServer
-The name of the app that you want to use needs to be set as the `WELCOME_APP`
-environment variable. You will also need to set the `KSPATH` and `KSKEY`
-environment variables to their corresponding values.
+### Vault Setup
+You will need to create two secrets in the vault, one that will have the information for your production system, the
+other with your testing configuration. Information on how to setup Vault and AppRoles can be found at: https://sdsu-its.gitbooks.io/vault/content/
+
+The name of the secret that you want to use needs to be set as the `TAP_APP` environment variable, without the backend name (commonly `secret`). You will also need to set the `VAULT_ADDR`, `VAULT_ROLE` and `VAULT_SECRET` environment variables to their corresponding values.
 
 Production and Staging all share the same parameters.
 - `db-password` - DB Password
